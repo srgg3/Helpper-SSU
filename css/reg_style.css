@@ -205,6 +205,14 @@ body {
 .input-wrap .input {
   padding-right: 44px;
 }
+.input-error {
+  display: block;
+  font-size: 12px;
+  color: #e07070;
+  margin-top: 6px;
+  min-height: 16px; 
+  transition: opacity 0.2s;
+}
 .eye-btn {
   position: absolute;
   right: 13px;
