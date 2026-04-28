@@ -1,0 +1,15 @@
+
+@font-face {
+  font-family: "Kolbano";
+  src: url("Fonts/Kolbano/Kolbano-regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Kolbano";
+  src: url("Fonts/Kolbano/Kolbano-regularItalic.otf") format("opentype");
+  font-style: italic;
+}
+
+html {
+  font-family: "Kolbano", sans-serif;
+}

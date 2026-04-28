@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/main_style.css" />
+    <link rel="stylesheet"  href="css/reg_style.css" />
+    <title>Registration</title>
+  </head>
+<body>
+ 
+ <body>
+ 
+<canvas id="bg-canvas"></canvas>
+ 
+<div id="page">
+  <span onclick="document.location=''" id="nametag">Helpper SSU</span>
+ 
+  <div id="full-reg">
+    <form id="registration" action="/apply/" method="POST">
+      <div id="regstyle">
+        <span id="namehead">Create your account</span>
+ 
+        <div class="fill-box">
+          <label>
+            <span class="input-title">ФИО</span>
+            <input class="input" type="text" name="username" placeholder="Lebedev Semen" required/>
+          </label>
+        </div>
+        <div class="fill-box">
+          <label>
+            <span class="input-title">Group</span>
+            <input class="input" type="text" name="groupnum" placeholder="111" required/>
+          </label>
+        </div>
+        <div class="fill-box">
+          <label>
+            <span class="input-title">Email</span>
+            <input class="input" type="email" name="email" placeholder="you@ssu.edu" required autofocus/>
+          </label>
+        </div>
+        <div class="fill-box" id="pswstyle">
+            <label>
+                <span class="input-title">Password</span>
+            </label>
+            <div class="input-wrap">
+                <input class="input" type="password" id="password" name="password" placeholder="••••••••" required/>
+                <button type="button" class="eye-btn" onclick="togglePassword()" aria-label="Show password">
+                <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                </button>
+            </div>
+            </div>
+ 
+        <div class="contain-btn">
+          <button class="button-register" type="submit">Sign up</button>
+        </div>
+        <div class="divider"></div>
+        <a id="link-text" href="">Already have an account? Sign in</a>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+ 
+let W, H;
+ 
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', () => { resize(); initStars(); });
+ 
+// ── Stars ──────────────────────────────────────────────
+const STAR_COUNT = 160;
+let stars = [];
+ 
+function initStars() {
+  stars = [];
+  for (let i = 0; i < STAR_COUNT; i++) {
+    const accent = Math.random() < 0.06;
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: accent ? 1.6 + Math.random() * 1.2 : 0.4 + Math.random() * 1.1,
+      baseAlpha: 0.35 + Math.random() * 0.65,
+      alpha: 0,
+      speed: 0.0004 + Math.random() * 0.0018,  
+      phase: Math.random() * Math.PI * 2,
+      accent,
+    });
+  }
+}
+initStars();
+ 
+function drawStars(t) {
+  for (const s of stars) {
+    s.alpha = s.baseAlpha * (0.45 + 0.55 * Math.sin(t * s.speed + s.phase));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    if (s.accent) {
+      ctx.fillStyle = `rgba(201,168,208,${s.alpha})`;
+    } else {
+      ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
+    }
+    ctx.fill();
+  }
+}
+ 
+// ── Flowing curved stripes ──────────────────────────────
+// Each stripe is a bezier with control points that oscillate
+const STRIPES = [
+  // горизонтальные — как были
+  { yBase: 0.09, cpY1: 0.04, cpY2: 0.17, amp: 32, freq: 0.00017, phase: 0.0,  color: [77,45,82],   alpha: 0.54, width: 2.2 },
+  { yBase: 0.58, cpY1: 0.63, cpY2: 0.50, amp: 18, freq: 0.00023, phase: 4.5,  color: [90,48,96],   alpha: 0.29, width: 1.8 },
+  { yBase: 0.88, cpY1: 0.92, cpY2: 0.83, amp: 15, freq: 0.00020, phase: 0.6,  color: [90,48,96],   alpha: 0.30, width: 1.5 },
+
+  // вертикальные — как были
+  { xBase: 0.55, amp: 18, freq: 0.00019, phase: 3.6, color: [77,45,82],   alpha: 0.22, width: 1.0, vertical: true },
+
+  // диагональные — из угла в угол
+  { x1: 0.0, y1: 0.0,  x2: 1.0, y2: 1.0,  cpx1: 0.5, cpy1: 0.1,  cpx2: 0.5, cpy2: 0.8,  amp: 30, freq: 0.00016, phase: 0.5,  color: [107,58,114], alpha: 0.50, width: 2.4, diagonal: true },
+  { x1: 0.0, y1: 0.15, x2: 1.0, y2: 0.85, cpx1: 0.25,cpy1: 0.05, cpx2: 0.7, cpy2: 0.95, amp: 22, freq: 0.00020, phase: 2.1,  color: [77,45,82],   alpha: 0.38, width: 1.4, diagonal: true },
+  { x1: 1.0, y1: 0.0,  x2: 0.0, y2: 1.0,  cpx1: 0.7, cpy1: 0.1,  cpx2: 0.3, cpy2: 0.9,  amp: 28, freq: 0.00014, phase: 3.8,  color: [90,48,96],   alpha: 0.44, width: 2.0, diagonal: true },
+  { x1: 1.0, y1: 0.2,  x2: 0.1, y2: 1.0,  cpx1: 0.8, cpy1: 0.05, cpx2: 0.2, cpy2: 0.75, amp: 18, freq: 0.00022, phase: 1.3,  color: [77,45,82],   alpha: 0.28, width: 1.1, diagonal: true },
+  { x1: 0.2, y1: 0.0,  x2: 1.0, y2: 0.75, cpx1: 0.5, cpy1: 0.15, cpx2: 0.85,cpy2: 0.5,  amp: 24, freq: 0.00018, phase: 5.0,  color: [107,58,114], alpha: 0.32, width: 1.6, diagonal: true },
+];
+ 
+function drawStripes(t) {
+  for (const s of STRIPES) {
+    const [r,g,b] = s.color;
+
+    if (s.diagonal) {
+      const x1 = s.x1 * W,  y1 = s.y1 * H;
+      const x2 = s.x2 * W,  y2 = s.y2 * H;
+      // перпендикуляр к направлению линии — для колебания
+      const dx = x2 - x1, dy = y2 - y1;
+      const len = Math.sqrt(dx*dx + dy*dy);
+      const nx = -dy / len, ny = dx / len; // единичный перпендикуляр
+      const wave1 = Math.sin(t * s.freq + s.phase)       * s.amp;
+      const wave2 = Math.sin(t * s.freq + s.phase + 1.5) * s.amp;
+
+      const cp1x = s.cpx1 * W + nx * wave1;
+      const cp1y = s.cpy1 * H + ny * wave1;
+      const cp2x = s.cpx2 * W + nx * wave2;
+      const cp2y = s.cpy2 * H + ny * wave2;
+
+      const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+      grad.addColorStop(0,    `rgba(${r},${g},${b},0)`);
+      grad.addColorStop(0.25, `rgba(${r},${g},${b},${s.alpha})`);
+      grad.addColorStop(0.75, `rgba(${r},${g},${b},${s.alpha * 0.9})`);
+      grad.addColorStop(1,    `rgba(${r},${g},${b},0)`);
+
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = s.width;
+      ctx.stroke();
+
+    }
+    else if (!s.vertical) {
+      const y0   = s.yBase * H;
+      const cpY1 = (s.cpY1 !== undefined ? s.cpY1 : s.yBase) * H;
+      const cpY2 = (s.cpY2 !== undefined ? s.cpY2 : s.yBase) * H;
+      const cp1x = W * 0.28;
+      const cp1y = cpY1 + Math.sin(t * s.freq + s.phase) * s.amp;
+      const cp2x = W * 0.65;
+      const cp2y = cpY2 + Math.sin(t * s.freq + s.phase + 1.4) * s.amp;
+      const endY = y0   + Math.sin(t * s.freq + s.phase + 2.8) * (s.amp * 0.5);
+
+      const grad = ctx.createLinearGradient(0, 0, W, 0);
+      grad.addColorStop(0,    `rgba(${r},${g},${b},0)`);
+      grad.addColorStop(0.25, `rgba(${r},${g},${b},${s.alpha})`);
+      grad.addColorStop(0.75, `rgba(${r},${g},${b},${s.alpha * 0.92})`);
+      grad.addColorStop(1,    `rgba(${r},${g},${b},0)`);
+
+      ctx.beginPath();
+      ctx.moveTo(-30, y0);
+      ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, W + 30, endY);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = s.width;
+      ctx.stroke();
+
+    } 
+    else {
+      const x0   = s.xBase * W;
+      const cp1y = H * 0.28;
+      const cp1x = x0 + Math.sin(t * s.freq + s.phase)       * s.amp;
+      const cp2y = H * 0.65;
+      const cp2x = x0 + Math.sin(t * s.freq + s.phase + 1.6) * s.amp;
+      const endX = x0 + Math.sin(t * s.freq + s.phase + 3.0) * (s.amp * 0.5);
+
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0,    `rgba(${r},${g},${b},0)`);
+      grad.addColorStop(0.25, `rgba(${r},${g},${b},${s.alpha})`);
+      grad.addColorStop(0.75, `rgba(${r},${g},${b},${s.alpha * 0.9})`);
+      grad.addColorStop(1,    `rgba(${r},${g},${b},0)`);
+
+      ctx.beginPath();
+      ctx.moveTo(x0, -20);
+      ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, H + 20);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = s.width;
+      ctx.stroke();
+    }
+  }
+}
+ 
+// ── Background gradient ────────────────────────────────
+function drawBg() {
+  const grad = ctx.createLinearGradient(0, 0, W * 0.3, H);
+  grad.addColorStop(0, '#1A1828');
+  grad.addColorStop(1, '#151C32');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+}
+ 
+// ── Main loop ──────────────────────────────────────────
+function loop(t) {
+  ctx.clearRect(0, 0, W, H);
+  drawBg();
+  drawStripes(t);
+  drawStars(t);
+  requestAnimationFrame(loop);
+}
+ 
+requestAnimationFrame(loop);
+</script>
+<script>
+function togglePassword() {
+  const input = document.getElementById('password');
+  const icon  = document.getElementById('eye-icon');
+  const show  = input.type === 'password';
+  input.type  = show ? 'text' : 'password';
+  icon.innerHTML = show
+    ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`
+    : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+}
+</script>
+</body>
+</html>
